@@ -6,8 +6,28 @@
       <h1 class="brand-title">Kestrel Industrial</h1>
     </div>
   </div>
-  <p class="brand-tagline">Secure guidance from your SOPs, P&amp;IDs, and runbooks</p>
+  <div class="header-end">
+    @if (auth.isSignedIn() && auth.user(); as user) {
+      <div class="user-chip">
+        @if (user.picture) {
+          <img class="user-avatar" [src]="user.picture" [alt]="user.name || 'User'" />
+        }
+        <span class="user-name">{{ user.name || user.email }}</span>
+        <button mat-button type="button" class="sign-out" (click)="auth.signOut()">
+          Sign out
+        </button>
+      </div>
+    } @else {
+      <p class="brand-tagline">Secure guidance from your SOPs, P&amp;IDs, and runbooks</p>
+    }
+  </div>
 </header>
 <main class="kestrel-main">
-  <router-outlet />
+  @if (!auth.ready()) {
+    <p class="auth-loading">Loading…</p>
+  } @else if (auth.authRequired() && !auth.isSignedIn()) {
+    <app-login-gate />
+  } @else {
+    <router-outlet />
+  }
 </main>

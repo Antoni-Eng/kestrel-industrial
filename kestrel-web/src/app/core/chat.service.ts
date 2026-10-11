@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { AuthService } from './auth.service';
 import { getKestrelConfig } from './config';
 import {
   ChatMessage,
@@ -10,6 +11,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private readonly apiBaseUrl = getKestrelConfig().apiBaseUrl;
+  private readonly auth = inject(AuthService);
 
   readonly messages = signal<ChatMessage[]>([]);
   readonly answerText = signal('');
@@ -26,7 +28,15 @@ export class ChatService {
 
   async loadModelInfo(): Promise<void> {
     try {
-      const res = await fetch(`${this.apiBaseUrl}/api/model`);
+      const res = await fetch(`${this.apiBaseUrl}/api/model`, {
+        headers: {
+          ...this.auth.authorizationHeader(),
+        },
+      });
+      if (res.status === 401) {
+        this.auth.handleUnauthorized();
+        return;
+      }
       if (!res.ok) {
         return;
       }
@@ -76,6 +86,7 @@ export class ChatService {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
+          ...this.auth.authorizationHeader(),
         },
         body: JSON.stringify({
           message: request.message,
@@ -85,6 +96,11 @@ export class ChatService {
         }),
         signal: this.abortController.signal,
       });
+
+      if (response.status === 401) {
+        this.auth.handleUnauthorized();
+        throw new Error('Signed out — please sign in again.');
+      }
 
       if (!response.ok) {
         throw new Error(`Chat request failed (${response.status})`);

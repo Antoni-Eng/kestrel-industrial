@@ -2,6 +2,8 @@
 
 Portfolio RAG system for a fictional manufacturer. Technicians ask questions over manuals and safety procedures; answers are cited and can call tools against maintenance records.
 
+**Developer reference:** [docs/TECHNICAL.md](docs/TECHNICAL.md) — architecture, APIs, RAG pipeline, config, and operational notes.
+
 ## What it demonstrates
 
 - **Vector database (Qdrant)** with model-aware collection naming
@@ -10,6 +12,7 @@ Portfolio RAG system for a fictional manufacturer. Technicians ask questions ove
 - **API keys in appsettings** under `Llm:Profiles:*:ApiKey` (see `Kestrel.Api/appsettings.Example.json`)
 - **Tool-augmented answers** over SQLite maintenance / work orders
 - **SSE streaming** to an Angular UI with citations and safety banners
+- **Google OAuth** (ID token in the browser; JWT validation on the API)
 - **Eval harness** (Hit@5 / MRR) against a golden question set
 - **.NET Aspire** orchestration + OpenTelemetry
 
@@ -79,6 +82,34 @@ Committed `appsettings.json` files keep `ApiKey` empty. Put real keys in gitigno
 
 See `Kestrel.Api/appsettings.Example.json` for profile shapes.
 
+## Google sign-in (optional locally)
+
+With `Authentication:Google:ClientId` empty, the API stays open in **Development** (handy for first-time setup). Set a Client ID on both API and Angular to require Google login.
+
+1. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an OAuth client of type **Web application**.
+2. Under **Authorized JavaScript origins**, add `http://localhost:4200` (and any other UI origin you use). A redirect URI is not required for the GIS ID-token button flow.
+3. Put the Client ID only in **gitignored** local files (never commit it):
+
+```json
+// Kestrel.Api/appsettings.Development.json (gitignored)
+{
+  "Authentication": {
+    "Google": { "ClientId": "YOUR_ID.apps.googleusercontent.com" },
+    "ApiKey": "long-random-string-for-eval",
+    "CorsOrigins": [ "http://localhost:4200" ]
+  }
+}
+```
+
+```bash
+# Angular — copy example, then paste Client ID
+cp kestrel-web/public/kestrel-config.local.example.js kestrel-web/public/kestrel-config.local.js
+```
+
+`kestrel-config.local.js` sets `window.__KESTREL_CONFIG__.googleClientId` and is gitignored.
+
+Protected: all `/api/*` except `/api/health/llm` (plus Aspire `/health` and `/alive`). Outside Development, a missing Client ID fails startup.
+
 ## Switch LLM / use a more powerful PC
 
 Edit `Kestrel.Api/appsettings.json` (or a Local/Development overlay):
@@ -118,6 +149,14 @@ With the API running:
 
 ```bash
 dotnet run --project Kestrel.Eval
+```
+
+If Google auth is enabled, pass the same key as `Authentication:ApiKey`:
+
+```bash
+$env:KESTREL_API_KEY="long-random-string-for-eval"
+dotnet run --project Kestrel.Eval
+# or: dotnet run --project Kestrel.Eval -- http://localhost:5258 ./data your-api-key
 ```
 
 Report: `data/eval/latest-report.md`

@@ -108,7 +108,8 @@ await using (var connection = new SqliteConnection($"Data Source={dbPath}"))
             opened_at TEXT NOT NULL, due_at TEXT NULL);
         CREATE TABLE feedback (
             id INTEGER PRIMARY KEY AUTOINCREMENT, conversation_id TEXT NOT NULL, message_id TEXT NOT NULL,
-            helpful INTEGER NOT NULL, comment TEXT NULL, trace_id TEXT NULL, created_at TEXT NOT NULL);
+            helpful INTEGER NOT NULL, comment TEXT NULL, trace_id TEXT NULL,
+            user_id TEXT NULL, user_email TEXT NULL, created_at TEXT NOT NULL);
         """);
 
     foreach (var plant in CompanySeed.Plants)

@@ -1,28 +1,91 @@
+using System.Security.Claims;
 using System.Text.Json;
+using Kestrel.Api.Auth;
 using Kestrel.Core;
 using Kestrel.Core.Abstractions;
 using Kestrel.Core.Configuration;
 using Kestrel.Core.Llm;
 using Kestrel.Core.Models;
 using Kestrel.Core.Rag;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Qdrant.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.Services.AddKestrelCore(builder.Configuration);
+builder.Services.Configure<AuthOptions>(
+    builder.Configuration.GetSection(AuthOptions.SectionName));
 builder.Services.PostConfigure<RagOptions>(rag =>
 {
     rag.DataRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, rag.DataRoot));
     rag.SqlitePath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, rag.SqlitePath));
 });
 builder.Services.AddOpenApi();
+
+var authOptions = builder.Configuration
+    .GetSection(AuthOptions.SectionName)
+    .Get<AuthOptions>() ?? new AuthOptions();
+var googleClientId = authOptions.Google.ClientId?.Trim();
+var authEnabled = !string.IsNullOrWhiteSpace(googleClientId);
+
+if (!authEnabled && !builder.Environment.IsDevelopment())
+{
+    throw new InvalidOperationException(
+        "Authentication:Google:ClientId is required outside Development. " +
+        "Set it in appsettings or environment variables.");
+}
+
+var corsOrigins = authOptions.CorsOrigins is { Length: > 0 }
+    ? authOptions.CorsOrigins
+    : ["http://localhost:4200"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
-        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+        policy.WithOrigins(corsOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod());
 });
+
+if (authEnabled)
+{
+    builder.Services
+        .AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        {
+            options.Authority = "https://accounts.google.com";
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuers = ["https://accounts.google.com", "accounts.google.com"],
+                ValidateAudience = true,
+                ValidAudience = googleClientId,
+                ValidateLifetime = true,
+                NameClaimType = "name",
+                RoleClaimType = ClaimTypes.Role
+            };
+        })
+        .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(
+            ApiKeyAuthenticationHandler.SchemeName,
+            _ => { });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("ApiUser", policy =>
+            policy.AddAuthenticationSchemes(
+                    JwtBearerDefaults.AuthenticationScheme,
+                    ApiKeyAuthenticationHandler.SchemeName)
+                .RequireAuthenticatedUser());
+    });
+}
 
 if (!string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString("qdrant")))
 {
@@ -47,6 +110,18 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 app.UseCors("frontend");
 
+if (authEnabled)
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.Logger.LogInformation("Google JWT auth enabled (audience={ClientId})", googleClientId);
+}
+else
+{
+    app.Logger.LogWarning(
+        "Authentication disabled: Authentication:Google:ClientId is empty (Development only).");
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -55,13 +130,20 @@ if (app.Environment.IsDevelopment())
 var maintenance = app.Services.GetRequiredService<IMaintenanceStore>();
 await maintenance.InitializeAsync();
 
-app.MapGet("/api/health/llm", async (ILlmProviderFactory llm, CancellationToken ct) =>
+var anonymous = app.MapGroup("/api");
+anonymous.MapGet("/health/llm", async (ILlmProviderFactory llm, CancellationToken ct) =>
 {
     var result = await llm.CheckHealthAsync(ct);
     return Results.Ok(result);
 });
 
-app.MapGet("/api/model", (ILlmProviderFactory llm, IOptions<LlmOptions> options) =>
+var api = app.MapGroup("/api");
+if (authEnabled)
+{
+    api.RequireAuthorization("ApiUser");
+}
+
+api.MapGet("/model", (ILlmProviderFactory llm, IOptions<LlmOptions> options) =>
 {
     var chat = llm.GetActiveChatProfile();
     var emb = llm.GetActiveEmbeddingProfile();
@@ -76,13 +158,13 @@ app.MapGet("/api/model", (ILlmProviderFactory llm, IOptions<LlmOptions> options)
     });
 });
 
-app.MapGet("/api/equipment", async (IMaintenanceStore store, CancellationToken ct) =>
+api.MapGet("/equipment", async (IMaintenanceStore store, CancellationToken ct) =>
 {
     var items = await store.GetEquipmentAsync(ct);
     return Results.Ok(items);
 });
 
-app.MapPost("/api/search", async (SearchRequest request, IRetriever retriever, CancellationToken ct) =>
+api.MapPost("/search", async (SearchRequest request, IRetriever retriever, CancellationToken ct) =>
 {
     var hits = await retriever.RetrieveAsync(request.Query, request.EquipmentId, ct);
     return Results.Ok(hits.Select(h => new
@@ -98,7 +180,7 @@ app.MapPost("/api/search", async (SearchRequest request, IRetriever retriever, C
     }));
 });
 
-app.MapGet("/api/documents/{documentId}", async (
+api.MapGet("/documents/{documentId}", async (
     string documentId,
     IOptions<RagOptions> ragOptions,
     IDocumentLoader loader,
@@ -147,15 +229,26 @@ app.MapGet("/api/documents/{documentId}", async (
     });
 });
 
-app.MapPost("/api/feedback", async (FeedbackRequest feedback, IMaintenanceStore store, CancellationToken ct) =>
+api.MapPost("/feedback", async (
+    FeedbackRequest feedback,
+    HttpContext http,
+    IMaintenanceStore store,
+    CancellationToken ct) =>
 {
-    await store.SaveFeedbackAsync(feedback, ct);
+    var userId = http.User.FindFirstValue("sub")
+        ?? http.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var email = http.User.FindFirstValue("email")
+        ?? http.User.FindFirstValue(ClaimTypes.Email);
+
+    await store.SaveFeedbackAsync(
+        feedback with { UserId = userId, UserEmail = email },
+        ct);
     return Results.Accepted();
 });
 
 var sseJson = new JsonSerializerOptions(JsonSerializerDefaults.Web);
 
-app.MapPost("/api/chat", async (
+api.MapPost("/chat", async (
     HttpContext http,
     ChatRequest request,
     IAnswerService answers,
@@ -188,7 +281,8 @@ app.MapPost("/api/chat", async (
 app.MapGet("/", () => Results.Ok(new
 {
     service = "Kestrel.Api",
-    docs = "/openapi/v1.json"
+    docs = "/openapi/v1.json",
+    auth = authEnabled ? "google+apikey" : "disabled"
 }));
 
 app.Run();

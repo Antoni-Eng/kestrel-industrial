@@ -47,12 +47,47 @@
   text-transform: none;
 }
 
+.header-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
 .brand-tagline {
   margin: 0;
   max-width: 22rem;
   font-size: 0.8125rem;
   color: var(--kestrel-text-muted);
   text-align: right;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--kestrel-border);
+}
+
+.user-name {
+  font-size: 0.875rem;
+  color: var(--kestrel-text);
+}
+
+.sign-out {
+  color: var(--kestrel-text-muted);
+}
+
+.auth-loading {
+  margin: 2rem;
+  color: var(--kestrel-text-muted);
 }
 
 .kestrel-main {
@@ -63,5 +98,9 @@
   .brand-tagline {
     text-align: left;
     max-width: none;
+  }
+
+  .user-name {
+    display: none;
   }
 }

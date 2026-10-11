@@ -59,7 +59,9 @@ public sealed record FeedbackRequest(
     string MessageId,
     bool Helpful,
     string? Comment,
-    string? TraceId);
+    string? TraceId,
+    string? UserId = null,
+    string? UserEmail = null);
 
 public sealed record MaintenanceLog(
     long Id,

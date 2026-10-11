@@ -2,6 +2,8 @@ import { environment } from '../../environments/environment';
 
 export interface KestrelConfig {
   apiBaseUrl: string;
+  /** Google OAuth Web Client ID. Empty = auth UI off (matches API Development bypass). */
+  googleClientId: string;
 }
 
 declare global {
@@ -21,5 +23,7 @@ export function getKestrelConfig(): KestrelConfig {
       fromWindow?.apiBaseUrl ??
       environment.apiBaseUrl ??
       DEFAULT_API_BASE_URL,
+    googleClientId:
+      fromWindow?.googleClientId ?? environment.googleClientId ?? '',
   };
 }

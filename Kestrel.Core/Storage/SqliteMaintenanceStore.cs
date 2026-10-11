@@ -61,10 +61,14 @@ public sealed class SqliteMaintenanceStore(IOptions<RagOptions> options) : IMain
                 helpful INTEGER NOT NULL,
                 comment TEXT NULL,
                 trace_id TEXT NULL,
+                user_id TEXT NULL,
+                user_email TEXT NULL,
                 created_at TEXT NOT NULL
             );
             """;
         await cmd.ExecuteNonQueryAsync(cancellationToken);
+        await EnsureColumnAsync(connection, "feedback", "user_id", "TEXT", cancellationToken);
+        await EnsureColumnAsync(connection, "feedback", "user_email", "TEXT", cancellationToken);
     }
 
     public async Task<IReadOnlyList<Equipment>> GetEquipmentAsync(CancellationToken cancellationToken = default)
@@ -184,16 +188,50 @@ public sealed class SqliteMaintenanceStore(IOptions<RagOptions> options) : IMain
         var cmd = connection.CreateCommand();
         cmd.CommandText =
             """
-            INSERT INTO feedback (conversation_id, message_id, helpful, comment, trace_id, created_at)
-            VALUES ($c, $m, $h, $comment, $t, $created)
+            INSERT INTO feedback (conversation_id, message_id, helpful, comment, trace_id, user_id, user_email, created_at)
+            VALUES ($c, $m, $h, $comment, $t, $uid, $email, $created)
             """;
         cmd.Parameters.AddWithValue("$c", feedback.ConversationId);
         cmd.Parameters.AddWithValue("$m", feedback.MessageId);
         cmd.Parameters.AddWithValue("$h", feedback.Helpful ? 1 : 0);
         cmd.Parameters.AddWithValue("$comment", (object?)feedback.Comment ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$t", (object?)feedback.TraceId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$uid", (object?)feedback.UserId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("$email", (object?)feedback.UserEmail ?? DBNull.Value);
         cmd.Parameters.AddWithValue("$created", DateTime.UtcNow.ToString("O"));
         await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private static async Task EnsureColumnAsync(
+        SqliteConnection connection,
+        string table,
+        string column,
+        string type,
+        CancellationToken cancellationToken)
+    {
+        var exists = false;
+        await using (var check = connection.CreateCommand())
+        {
+            check.CommandText = $"PRAGMA table_info({table})";
+            await using var reader = await check.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                if (reader.GetString(1).Equals(column, StringComparison.OrdinalIgnoreCase))
+                {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+
+        if (exists)
+        {
+            return;
+        }
+
+        await using var alter = connection.CreateCommand();
+        alter.CommandText = $"ALTER TABLE {table} ADD COLUMN {column} {type}";
+        await alter.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private async Task<SqliteConnection> OpenAsync(CancellationToken cancellationToken)

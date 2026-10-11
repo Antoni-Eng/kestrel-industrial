@@ -22,6 +22,14 @@ var questions = JsonSerializer.Deserialize<List<EvalQuestion>>(
 
 using var http = new HttpClient { BaseAddress = new Uri(apiBase), Timeout = TimeSpan.FromMinutes(5) };
 
+// Optional machine auth when API has Authentication:Google:ClientId set.
+var apiKey = Environment.GetEnvironmentVariable("KESTREL_API_KEY")
+    ?? args.ElementAtOrDefault(2);
+if (!string.IsNullOrWhiteSpace(apiKey))
+{
+    http.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
+}
+
 string chatProfile = "unknown";
 string chatModel = "unknown";
 try
