@@ -24,3 +24,4 @@ tools/qdrant/
 .env.*
 *.pem
 *.key
+docs/TECHNICAL.md

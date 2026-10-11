@@ -61,10 +61,19 @@ public sealed class QdrantVectorStore(
                 ["sourcePath"] = chunk.SourcePath,
                 ["section"] = chunk.Section,
                 ["content"] = chunk.Content,
-                ["chunkIndex"] = chunk.ChunkIndex,
-                ["equipmentId"] = chunk.EquipmentId ?? string.Empty,
-                ["plantId"] = chunk.PlantId ?? string.Empty
+                ["chunkIndex"] = chunk.ChunkIndex
             };
+
+            // Leave the key out when unset so the search filter can use IsEmpty.
+            if (!string.IsNullOrWhiteSpace(chunk.EquipmentId))
+            {
+                payload["equipmentId"] = chunk.EquipmentId;
+            }
+
+            if (!string.IsNullOrWhiteSpace(chunk.PlantId))
+            {
+                payload["plantId"] = chunk.PlantId;
+            }
 
             points.Add(new PointStruct
             {
@@ -89,12 +98,13 @@ public sealed class QdrantVectorStore(
                 $"Qdrant collection '{CollectionName}' does not exist. Run ingestion for the active embedding profile.");
         }
 
+        // Equipment-specific docs for this asset, plus general docs (SOPs, policies) with no equipment.
         Filter? filter = null;
         if (!string.IsNullOrWhiteSpace(equipmentId))
         {
             filter = new Filter
             {
-                Must =
+                Should =
                 {
                     new Condition
                     {
@@ -103,6 +113,10 @@ public sealed class QdrantVectorStore(
                             Key = "equipmentId",
                             Match = new Match { Keyword = equipmentId }
                         }
+                    },
+                    new Condition
+                    {
+                        IsEmpty = new IsEmptyCondition { Key = "equipmentId" }
                     }
                 }
             };

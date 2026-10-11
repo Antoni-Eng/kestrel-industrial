@@ -45,7 +45,7 @@ public sealed class JsonDocumentLoader : IDocumentLoader
 
         var title = root.TryGetProperty("title", out var t) ? t.GetString() ?? Path.GetFileName(path) : Path.GetFileName(path);
         var content = root.TryGetProperty("content", out var c) ? c.GetString() ?? root.ToString() : root.ToString();
-        var docType = root.TryGetProperty("docType", out var d) ? d.GetString() ?? DocTypes.Runbook : d.GetString()!;
+        var docType = root.TryGetProperty("docType", out var d) ? d.GetString() ?? DocTypes.Runbook : DocTypes.Runbook;
         var equipmentId = root.TryGetProperty("equipmentId", out var e) ? e.GetString() : null;
         var plantId = root.TryGetProperty("plantId", out var p) ? p.GetString() : null;
         var id = root.TryGetProperty("id", out var i) ? i.GetString() ?? Path.GetFileNameWithoutExtension(path)
@@ -69,18 +69,33 @@ public sealed class CompositeDocumentLoader(IEnumerable<IDocumentLoader> loaders
     }
 }
 
+/// <summary>
+/// Reads metadata from explicit header lines ("Document type:", "Equipment:", "Plant:") and the
+/// containing folder. Body text is never scanned for IDs: documents routinely cross-reference
+/// other SOPs and equipment, which would mis-tag them.
+/// </summary>
 internal static partial class MetadataParser
 {
+    private static readonly Dictionary<string, string> FolderDocTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["manuals"] = DocTypes.Manual,
+        ["safety"] = DocTypes.Safety,
+        ["incidents"] = DocTypes.Incident,
+        ["runbooks"] = DocTypes.Runbook
+    };
+
+    private static readonly HashSet<string> KnownDocTypes = new(FolderDocTypes.Values, StringComparer.OrdinalIgnoreCase);
+
     public static SourceDocument ToDocument(string path, string content)
     {
         var fileName = Path.GetFileNameWithoutExtension(path);
         var title = ExtractTitle(content) ?? fileName.Replace('-', ' ').Replace('_', ' ');
-        var docType = InferDocType(path, content);
-        var equipmentId = ExtractEquipmentId(content) ?? ExtractEquipmentId(fileName);
-        var plantId = ExtractPlantId(content) ?? ExtractPlantId(path);
+        var docType = ResolveDocType(path, content);
+        var equipmentId = Header(EquipmentHeader(), content) ?? EquipmentFromFileName(fileName);
+        var plantId = Header(PlantHeader(), content);
         var id = fileName.ToLowerInvariant();
 
-        return new SourceDocument(id, title, docType, path, equipmentId, plantId, content);
+        return new SourceDocument(id, title, docType, path, equipmentId?.ToUpperInvariant(), plantId?.ToUpperInvariant(), content);
     }
 
     private static string? ExtractTitle(string content)
@@ -89,45 +104,44 @@ internal static partial class MetadataParser
         return match.Success ? match.Groups[1].Value.Trim() : null;
     }
 
-    private static string InferDocType(string path, string content)
+    private static string ResolveDocType(string path, string content)
     {
-        var lower = (path + " " + content[..Math.Min(400, content.Length)]).ToLowerInvariant();
-        if (lower.Contains("safety") || lower.Contains("lockout") || lower.Contains("loto") || lower.Contains("ppe"))
+        var declared = Header(DocTypeHeader(), content)?.ToLowerInvariant();
+        if (declared is not null && KnownDocTypes.Contains(declared))
         {
-            return DocTypes.Safety;
+            return declared;
         }
 
-        if (lower.Contains("incident"))
-        {
-            return DocTypes.Incident;
-        }
-
-        if (lower.Contains("runbook") || lower.Contains("procedure"))
-        {
-            return DocTypes.Runbook;
-        }
-
-        return DocTypes.Manual;
+        var folder = Path.GetFileName(Path.GetDirectoryName(path));
+        return folder is not null && FolderDocTypes.TryGetValue(folder, out var fromFolder)
+            ? fromFolder
+            : DocTypes.Manual;
     }
 
-    private static string? ExtractEquipmentId(string text)
+    private static string? EquipmentFromFileName(string fileName)
     {
-        var match = EquipmentId().Match(text);
-        return match.Success ? match.Groups[1].Value.ToUpperInvariant() : null;
+        var match = EquipmentFileName().Match(fileName);
+        return match.Success ? match.Groups[1].Value : null;
     }
 
-    private static string? ExtractPlantId(string text)
+    private static string? Header(Regex pattern, string content)
     {
-        var match = PlantId().Match(text);
-        return match.Success ? match.Groups[1].Value.ToUpperInvariant() : null;
+        var match = pattern.Match(content);
+        return match.Success ? match.Groups[1].Value.Trim() : null;
     }
 
     [GeneratedRegex(@"^#\s+(.*)$", RegexOptions.Multiline)]
     private static partial Regex TitleLine();
 
-    [GeneratedRegex(@"\b([A-Z]{2,5}-\d{2,4})\b")]
-    private static partial Regex EquipmentId();
+    [GeneratedRegex(@"^\s*Document type:\s*([A-Za-z]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase)]
+    private static partial Regex DocTypeHeader();
 
-    [GeneratedRegex(@"\b(PLANT-[A-Z0-9]+)\b", RegexOptions.IgnoreCase)]
-    private static partial Regex PlantId();
+    [GeneratedRegex(@"^\s*Equipment:\s*([A-Za-z]{2,5}-\d{1,4})\b", RegexOptions.Multiline | RegexOptions.IgnoreCase)]
+    private static partial Regex EquipmentHeader();
+
+    [GeneratedRegex(@"^\s*Plant:\s*(PLANT-[A-Za-z0-9]+)\b", RegexOptions.Multiline | RegexOptions.IgnoreCase)]
+    private static partial Regex PlantHeader();
+
+    [GeneratedRegex(@"^([A-Za-z]{2,5}-\d{1,4})-(?:manual|runbook)$", RegexOptions.IgnoreCase)]
+    private static partial Regex EquipmentFileName();
 }

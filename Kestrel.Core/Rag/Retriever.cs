@@ -13,6 +13,7 @@ namespace Kestrel.Core.Rag;
 
 public sealed partial class Retriever(
     IVectorStore vectorStore,
+    IMaintenanceStore maintenanceStore,
     ILlmProviderFactory llmFactory,
     IOptions<RagOptions> options,
     ILogger<Retriever> logger) : IRetriever
@@ -28,7 +29,9 @@ public sealed partial class Retriever(
         var rewritten = await RewriteQueryAsync(query, cancellationToken);
         activity?.SetTag("query.rewritten", rewritten);
 
-        var inferredEquipment = equipmentId ?? ExtractEquipmentId(query) ?? ExtractEquipmentId(rewritten);
+        var inferredEquipment = equipmentId
+            ?? await KnownEquipmentAsync(ExtractEquipmentId(query), cancellationToken)
+            ?? await KnownEquipmentAsync(ExtractEquipmentId(rewritten), cancellationToken);
         activity?.SetTag("equipment.id", inferredEquipment);
 
         var embeddingClient = llmFactory.CreateEmbeddingGenerator();
@@ -134,6 +137,17 @@ public sealed partial class Retriever(
         return numbers;
     }
 
+    private async Task<string?> KnownEquipmentAsync(string? candidate, CancellationToken cancellationToken)
+    {
+        if (candidate is null)
+        {
+            return null;
+        }
+
+        var equipment = await maintenanceStore.GetEquipmentAsync(candidate, cancellationToken);
+        return equipment?.Id;
+    }
+
     public static string? ExtractEquipmentId(string text)
     {
         var match = EquipmentId().Match(text);
@@ -146,6 +160,7 @@ public sealed partial class Retriever(
     [GeneratedRegex(@"\d+")]
     private static partial Regex RankNumbers();
 
-    [GeneratedRegex(@"\b([A-Z]{2,5}-\d{2,4})\b", RegexOptions.IgnoreCase)]
+    // Standalone IDs only: rejects the "LOTO-01" inside "SOP-LOTO-01" and "CNC-204" inside "KST-CNC-204-BRG".
+    [GeneratedRegex(@"(?<![A-Za-z0-9-])([A-Z]{2,5}-\d{1,4})(?![A-Za-z0-9-])", RegexOptions.IgnoreCase)]
     private static partial Regex EquipmentId();
 }

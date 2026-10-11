@@ -124,16 +124,10 @@ public sealed class LlmProviderFactory(
     }
 
     private IChatClient CreateOllamaChatClient(LlmProfile profile)
-    {
-        ollamaHttp.Chat.BaseAddress ??= new Uri(NormalizeEndpoint(profile.Endpoint));
-        return new OllamaApiClient(ollamaHttp.Chat, profile.ChatModel);
-    }
+        => new OllamaApiClient(ollamaHttp.GetChat(profile.Endpoint), profile.ChatModel);
 
     private IEmbeddingGenerator<string, Embedding<float>> CreateOllamaEmbeddingGenerator(LlmProfile profile)
-    {
-        ollamaHttp.Embed.BaseAddress ??= new Uri(NormalizeEndpoint(profile.Endpoint));
-        return new OllamaApiClient(ollamaHttp.Embed, profile.EmbeddingModel);
-    }
+        => new OllamaApiClient(ollamaHttp.GetEmbed(profile.Endpoint), profile.EmbeddingModel);
 
     private static IChatClient CreateOpenAiChatClient(LlmProfile profile)
     {
