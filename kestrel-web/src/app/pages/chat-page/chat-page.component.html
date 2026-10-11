@@ -1,0 +1,60 @@
+<mat-drawer-container class="chat-shell" autosize>
+  <mat-drawer-content class="chat-main">
+    <div class="chat-toolbar">
+      <app-equipment-filter />
+      <div class="toolbar-end">
+        <app-model-badge />
+        <button
+          mat-icon-button
+          type="button"
+          class="sources-toggle"
+          aria-label="Toggle sources panel"
+          (click)="sourcesOpen.set(!sourcesOpen())"
+        >
+          <mat-icon>library_books</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <app-tool-activity />
+
+    <app-message-list (citationClick)="onCitationClick($event)" />
+
+    <footer class="composer">
+      <mat-form-field appearance="outline" class="composer-field" subscriptSizing="dynamic">
+        <mat-label>Ask about procedures, alarms, or equipment</mat-label>
+        <textarea
+          matInput
+          rows="2"
+          [(ngModel)]="draft"
+          (keydown)="onKeydown($event)"
+          [disabled]="chat.streaming()"
+        ></textarea>
+      </mat-form-field>
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        class="send-btn"
+        [disabled]="!draft.trim() || chat.streaming()"
+        (click)="submit()"
+      >
+        <mat-icon>send</mat-icon>
+        Send
+      </button>
+    </footer>
+  </mat-drawer-content>
+
+  <mat-drawer
+    class="sources-drawer"
+    position="end"
+    mode="side"
+    [opened]="sourcesOpen()"
+    (openedChange)="sourcesOpen.set($event)"
+  >
+    <app-source-panel
+      [citations]="panelCitations()"
+      [selectedIndex]="highlightIndex()"
+    />
+  </mat-drawer>
+</mat-drawer-container>

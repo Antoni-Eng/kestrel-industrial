@@ -1,0 +1,137 @@
+{
+  "company": "Kestrel Industrial",
+  "plants": [
+    {
+      "Id": "PLANT-NORTH",
+      "Name": "Kestrel North Fabrication",
+      "Location": "Sheffield, UK"
+    },
+    {
+      "Id": "PLANT-SOUTH",
+      "Name": "Kestrel South Assembly",
+      "Location": "Coventry, UK"
+    }
+  ],
+  "equipment": [
+    {
+      "Id": "CNC-204",
+      "Name": "Haas VF-2 Vertical Mill",
+      "Model": "VF-2",
+      "Type": "CNC Mill",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Bay A"
+    },
+    {
+      "Id": "CNC-118",
+      "Name": "DMG Mori NLX Lathe",
+      "Model": "NLX2500",
+      "Type": "CNC Lathe",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Bay A"
+    },
+    {
+      "Id": "CNC-311",
+      "Name": "Mazak Variaxis",
+      "Model": "j-500",
+      "Type": "5-Axis Mill",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Bay B"
+    },
+    {
+      "Id": "PRS-012",
+      "Name": "Schuler Hydraulic Press",
+      "Model": "H2P-200",
+      "Type": "Press",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Press Line"
+    },
+    {
+      "Id": "PRS-045",
+      "Name": "AIDA Progressive Press",
+      "Model": "NSU-110",
+      "Type": "Press",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Press Line"
+    },
+    {
+      "Id": "RBT-07",
+      "Name": "Fanuc M-20iD Robot",
+      "Model": "M-20iD/25",
+      "Type": "Robot",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Cell 1"
+    },
+    {
+      "Id": "RBT-08",
+      "Name": "ABB IRB 6700 Robot",
+      "Model": "IRB6700-200",
+      "Type": "Robot",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Cell 2"
+    },
+    {
+      "Id": "CNV-03",
+      "Name": "FlexLink Conveyor",
+      "Model": "X85",
+      "Type": "Conveyor",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Pack Line"
+    },
+    {
+      "Id": "CNV-11",
+      "Name": "Dorner 2200 Conveyor",
+      "Model": "2200",
+      "Type": "Conveyor",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Pack Line"
+    },
+    {
+      "Id": "WLD-22",
+      "Name": "Lincoln Power Wave Welder",
+      "Model": "S500",
+      "Type": "Welder",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Weld Bay"
+    },
+    {
+      "Id": "WLD-23",
+      "Name": "Miller Continuum Welder",
+      "Model": "500",
+      "Type": "Welder",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Weld Bay"
+    },
+    {
+      "Id": "CMP-01",
+      "Name": "Atlas Copco Compressor",
+      "Model": "GA37",
+      "Type": "Compressor",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Utilities"
+    },
+    {
+      "Id": "HVAC-4",
+      "Name": "Trane Rooftop Unit",
+      "Model": "IntelliPak",
+      "Type": "HVAC",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Roof"
+    },
+    {
+      "Id": "CLN-09",
+      "Name": "Ecoclean Parts Washer",
+      "Model": "EcoCBase",
+      "Type": "Washer",
+      "PlantId": "PLANT-NORTH",
+      "Area": "Finishing"
+    },
+    {
+      "Id": "INS-15",
+      "Name": "Zeiss CMM",
+      "Model": "CONTURA",
+      "Type": "Inspection",
+      "PlantId": "PLANT-SOUTH",
+      "Area": "Metrology"
+    }
+  ]
+}

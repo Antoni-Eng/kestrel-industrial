@@ -1,0 +1,89 @@
+%PDF-1.4
+1 0 obj<< /Type /Catalog /Pages 2 0 R >>endobj
+2 0 obj<< /Type /Pages /Kids [3 0 R] /Count 1 >>endobj
+3 0 obj<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources<< /Font<< /F1 5 0 R >> >> >>endobj
+4 0 obj<< /Length 1970 >>stream
+BT /F1 10 Tf 50 780 Td
+(Lockout/Tagout Procedure) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Lockout/Tagout Procedure \(SOP-LOTO-01\)) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Plant applicability: PLANT-NORTH, PLANT-SOUTH) Tj
+0 -12 Td
+(Document type: safety) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Purpose) Tj
+0 -12 Td
+(Prevent unexpected energization of equipment during service. This procedure is mandatory f) Tj
+0 -12 Td
+(or any work that places a technician inside a guarded envelope.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Authorized Employees) Tj
+0 -12 Td
+(Only technicians with current Kestrel LOTO certification may apply locks. Escorts must rem) Tj
+0 -12 Td
+(ain outside the envelope.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Energy Isolation Sequence) Tj
+0 -12 Td
+(1. Notify affected operators and place the machine in STOP.) Tj
+0 -12 Td
+(2. Shut down using the normal stopping procedure on the HMI.) Tj
+0 -12 Td
+(3. Isolate the main electrical disconnect. Attempt a start to verify isolation.) Tj
+0 -12 Td
+(4. Isolate pneumatic supply and bleed residual pressure to 0 bar.) Tj
+0 -12 Td
+(5. Isolate hydraulic power \(press assets\). Verify gauge reads 0 bar.) Tj
+0 -12 Td
+(6. Apply personal lock and completed tag on each energy source.) Tj
+0 -12 Td
+(7. Verify zero energy with a meter before contacting components.) Tj
+0 -12 Td
+(8. Perform the maintenance task.) Tj
+0 -12 Td
+(9. Remove tools, restore guards, remove locks in reverse order, and notify operations.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Group Lockout) Tj
+0 -12 Td
+(For multi-person jobs use the group lock box. Each worker applies a personal lock to the b) Tj
+0 -12 Td
+(ox. The box may not be opened until all personal locks are removed.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Prohibited Actions) Tj
+0 -12 Td
+(- Never loan your lock or use another person's lock.) Tj
+0 -12 Td
+(- Never remove a lock that is not yours.) Tj
+0 -12 Td
+(- Never rely on a software interlock as the sole isolation method.) Tj
+ET
+endstream
+endobj
+5 0 obj<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000111 00000 n 
+0000000233 00000 n 
+0000002252 00000 n 
+trailer<< /Size 6 /Root 1 0 R >>
+startxref
+2320
+%%EOF

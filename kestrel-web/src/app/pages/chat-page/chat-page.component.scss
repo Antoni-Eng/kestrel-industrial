@@ -1,0 +1,66 @@
+.chat-shell {
+  height: calc(100vh - var(--kestrel-header-height));
+  background: var(--kestrel-bg);
+}
+
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem 1.25rem;
+  min-width: 0;
+}
+
+.chat-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--kestrel-border);
+}
+
+.toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.sources-toggle {
+  display: none;
+}
+
+.composer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--kestrel-border);
+}
+
+.composer-field {
+  flex: 1;
+}
+
+.send-btn mat-icon {
+  margin-right: 0.25rem;
+  font-size: 1.125rem;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.sources-drawer {
+  width: min(360px, 90vw);
+  border-left: 1px solid var(--kestrel-border);
+}
+
+@media (max-width: 960px) {
+  .sources-toggle {
+    display: inline-flex;
+  }
+
+  .sources-drawer {
+    position: fixed !important;
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "id": "policy-shift-handover",
+  "title": "Shift Handover Checklist",
+  "docType": "runbook",
+  "plantId": "PLANT-NORTH",
+  "content": "# Shift Handover Checklist\r\n1. Review open work orders for the bay.\r\n2. Note any equipment in LOTO.\r\n3. Confirm coolant checks for CNC-204 and CNC-118.\r\n4. Escalate unresolved E-stops to the plant lead."
+}

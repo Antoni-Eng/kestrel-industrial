@@ -1,0 +1,471 @@
+[
+  {
+    "Id": "q01",
+    "Question": "How do I replace the spindle bearing on CNC-204?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "torque",
+      "LOTO",
+      "KST-CNC-204-BRG"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q02",
+    "Question": "What PPE is required for bearing service?",
+    "ExpectedDocumentIds": [
+      "sop-ppe-02"
+    ],
+    "KeyFacts": [
+      "cut-resistant",
+      "face shield"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q03",
+    "Question": "What is the lockout sequence before opening guards?",
+    "ExpectedDocumentIds": [
+      "sop-loto-01"
+    ],
+    "KeyFacts": [
+      "isolate",
+      "personal lock",
+      "zero energy"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q04",
+    "Question": "What coolant concentration should CNC machines use?",
+    "ExpectedDocumentIds": [
+      "sop-chem-03",
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "7%",
+      "9%"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q05",
+    "Question": "How do I enter the robot cell for RBT-07?",
+    "ExpectedDocumentIds": [
+      "sop-robot-04"
+    ],
+    "KeyFacts": [
+      "Teach mode",
+      "enabling device"
+    ],
+    "EquipmentId": "RBT-07"
+  },
+  {
+    "Id": "q06",
+    "Question": "What are the die change controls for PRS-012?",
+    "ExpectedDocumentIds": [
+      "sop-press-05",
+      "prs-012-manual"
+    ],
+    "KeyFacts": [
+      "safety blocks",
+      "LOTO"
+    ],
+    "EquipmentId": "PRS-012"
+  },
+  {
+    "Id": "q07",
+    "Question": "When was CNC-204 spindle bearing last replaced?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "maintenance",
+      "bearing"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q08",
+    "Question": "What grease is used after bearing install on CNC-204?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "KG-2",
+      "two pumps"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q09",
+    "Question": "What vibration limit is acceptable after warm-up?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "2.5 mm/s"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q10",
+    "Question": "How should chemical spills be handled?",
+    "ExpectedDocumentIds": [
+      "sop-chem-03"
+    ],
+    "KeyFacts": [
+      "spill kit",
+      "CHEM-WASTE-A"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q11",
+    "Question": "What is the preventive maintenance interval for CNV-03?",
+    "ExpectedDocumentIds": [
+      "cnv-03-manual"
+    ],
+    "KeyFacts": [
+      "250 hours"
+    ],
+    "EquipmentId": "CNV-03"
+  },
+  {
+    "Id": "q12",
+    "Question": "Who can open 480V electrical panels?",
+    "ExpectedDocumentIds": [
+      "sop-elec-08"
+    ],
+    "KeyFacts": [
+      "qualified electricians",
+      "arc-rated"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q13",
+    "Question": "What is the solo lift limit?",
+    "ExpectedDocumentIds": [
+      "sop-erg-09"
+    ],
+    "KeyFacts": [
+      "25 kg"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q14",
+    "Question": "How do I recover from ESTOP_CHAIN on RBT-08?",
+    "ExpectedDocumentIds": [
+      "rbt-08-runbook"
+    ],
+    "KeyFacts": [
+      "light curtains",
+      "safety PLC"
+    ],
+    "EquipmentId": "RBT-08"
+  },
+  {
+    "Id": "q15",
+    "Question": "What should be checked during shift handover?",
+    "ExpectedDocumentIds": [
+      "policy-shift-handover"
+    ],
+    "KeyFacts": [
+      "work orders",
+      "LOTO"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q16",
+    "Question": "Hot work outside the weld bay requires what?",
+    "ExpectedDocumentIds": [
+      "sop-hotwork-06"
+    ],
+    "KeyFacts": [
+      "permit",
+      "fire watch"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q17",
+    "Question": "Are the coolant pit and compressor pit confined spaces?",
+    "ExpectedDocumentIds": [
+      "sop-conf-07"
+    ],
+    "KeyFacts": [
+      "permit-required"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q18",
+    "Question": "What model is INS-15?",
+    "ExpectedDocumentIds": [
+      "ins-15-manual"
+    ],
+    "KeyFacts": [
+      "CONTURA",
+      "Zeiss"
+    ],
+    "EquipmentId": "INS-15"
+  },
+  {
+    "Id": "q19",
+    "Question": "What should I do if vibration exceeds 4.0 mm/s RMS?",
+    "ExpectedDocumentIds": [
+      "cnc-204-runbook",
+      "cnc-118-runbook"
+    ],
+    "KeyFacts": [
+      "urgent work order",
+      "LOTO"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q20",
+    "Question": "List open work orders for PLANT-NORTH related to presses.",
+    "ExpectedDocumentIds": [
+      "prs-012-manual"
+    ],
+    "KeyFacts": [
+      "work order"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q21",
+    "Question": "What torque is used on CNC-118 bearing housing bolts?",
+    "ExpectedDocumentIds": [
+      "cnc-118-manual"
+    ],
+    "KeyFacts": [
+      "Nm"
+    ],
+    "EquipmentId": "CNC-118"
+  },
+  {
+    "Id": "q22",
+    "Question": "Describe group lockout rules.",
+    "ExpectedDocumentIds": [
+      "sop-loto-01"
+    ],
+    "KeyFacts": [
+      "lock box",
+      "personal lock"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q23",
+    "Question": "What hearing protection rule applies in production?",
+    "ExpectedDocumentIds": [
+      "sop-ppe-02"
+    ],
+    "KeyFacts": [
+      "85 dBA"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q24",
+    "Question": "How do I report a near miss?",
+    "ExpectedDocumentIds": [
+      "sop-inc-10"
+    ],
+    "KeyFacts": [
+      "before shift end",
+      "EHS"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q25",
+    "Question": "What fanuc robot is RBT-07?",
+    "ExpectedDocumentIds": [
+      "rbt-07-manual"
+    ],
+    "KeyFacts": [
+      "M-20iD"
+    ],
+    "EquipmentId": "RBT-07"
+  },
+  {
+    "Id": "q26",
+    "Question": "Where is CMP-01 located?",
+    "ExpectedDocumentIds": [
+      "cmp-01-manual"
+    ],
+    "KeyFacts": [
+      "Utilities",
+      "PLANT-NORTH"
+    ],
+    "EquipmentId": "CMP-01"
+  },
+  {
+    "Id": "q27",
+    "Question": "What press safety blocks requirement exists?",
+    "ExpectedDocumentIds": [
+      "sop-press-05"
+    ],
+    "KeyFacts": [
+      "tonnage"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q28",
+    "Question": "Coolant checks mention which CNC assets in handover?",
+    "ExpectedDocumentIds": [
+      "policy-shift-handover"
+    ],
+    "KeyFacts": [
+      "CNC-204",
+      "CNC-118"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q29",
+    "Question": "What part number is the CNC-204 bearing?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "KST-CNC-204-BRG"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q30",
+    "Question": "Can I bypass light curtains if production is urgent?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual",
+      "sop-loto-01"
+    ],
+    "KeyFacts": [
+      "Do not bypass"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q31",
+    "Question": "What is the Level-B service content?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "filter",
+      "backlash",
+      "grease"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q32",
+    "Question": "How long must fire watch remain after hot work?",
+    "ExpectedDocumentIds": [
+      "sop-hotwork-06"
+    ],
+    "KeyFacts": [
+      "30 minutes"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q33",
+    "Question": "What welder is WLD-22?",
+    "ExpectedDocumentIds": [
+      "wld-22-manual"
+    ],
+    "KeyFacts": [
+      "Power Wave",
+      "S500"
+    ],
+    "EquipmentId": "WLD-22"
+  },
+  {
+    "Id": "q34",
+    "Question": "What should incident IR narratives include?",
+    "ExpectedDocumentIds": [
+      "sop-inc-10"
+    ],
+    "KeyFacts": [
+      "equipment IDs"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q35",
+    "Question": "Is software interlock enough for isolation?",
+    "ExpectedDocumentIds": [
+      "sop-loto-01"
+    ],
+    "KeyFacts": [
+      "Never rely"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q36",
+    "Question": "What area is PRS-045 in?",
+    "ExpectedDocumentIds": [
+      "prs-045-manual"
+    ],
+    "KeyFacts": [
+      "Press Line"
+    ],
+    "EquipmentId": "PRS-045"
+  },
+  {
+    "Id": "q37",
+    "Question": "How many pumps of grease after bearing install?",
+    "ExpectedDocumentIds": [
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "two pumps"
+    ],
+    "EquipmentId": "CNC-204"
+  },
+  {
+    "Id": "q38",
+    "Question": "What do I do before contacting moving assemblies?",
+    "ExpectedDocumentIds": [
+      "sop-loto-01",
+      "cnc-204-manual"
+    ],
+    "KeyFacts": [
+      "zero energy"
+    ],
+    "EquipmentId": null
+  },
+  {
+    "Id": "q39",
+    "Question": "Which plant hosts the metrology CMM?",
+    "ExpectedDocumentIds": [
+      "ins-15-manual"
+    ],
+    "KeyFacts": [
+      "PLANT-SOUTH"
+    ],
+    "EquipmentId": "INS-15"
+  },
+  {
+    "Id": "q40",
+    "Question": "What extinguisher type is required for hot work?",
+    "ExpectedDocumentIds": [
+      "sop-hotwork-06"
+    ],
+    "KeyFacts": [
+      "ABC"
+    ],
+    "EquipmentId": null
+  }
+]

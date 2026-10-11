@@ -1,0 +1,53 @@
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$cyan-palette,
+        tertiary: mat.$orange-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+:root {
+  --kestrel-bg: #12161c;
+  --kestrel-surface: #181e26;
+  --kestrel-surface-raised: #1f2731;
+  --kestrel-header-bg: #0d1117;
+  --kestrel-user-bg: #1a2830;
+  --kestrel-border: #2e3844;
+  --kestrel-text: #e6eaef;
+  --kestrel-text-muted: #8b949e;
+  --kestrel-accent: #3db8cf;
+  --kestrel-accent-dim: #2a7f8f;
+  --kestrel-accent-glow: rgba(61, 184, 207, 0.45);
+  --kestrel-warning: #e3a008;
+  --kestrel-danger: #f07178;
+  --kestrel-font-mono: 'Roboto Mono', 'Consolas', monospace;
+  --kestrel-header-height: 5.5rem;
+}
+
+body {
+  color-scheme: dark;
+  background-color: var(--kestrel-bg);
+  color: var(--kestrel-text);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: var(--kestrel-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--kestrel-accent-dim);
+  --mdc-outlined-text-field-focus-outline-color: var(--kestrel-accent);
+}
+
+.mat-drawer-container {
+  --mat-sidenav-content-background-color: var(--kestrel-bg);
+  --mat-sidenav-container-background-color: var(--kestrel-surface);
+}

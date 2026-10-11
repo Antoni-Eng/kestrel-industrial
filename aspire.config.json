@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "Kestrel.AppHost/Kestrel.AppHost.csproj"
+  }
+}
