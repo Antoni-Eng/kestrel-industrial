@@ -2,8 +2,6 @@
 
 Portfolio RAG system for a fictional manufacturer. Technicians ask questions over manuals and safety procedures; answers are cited and can call tools against maintenance records.
 
-**Developer reference:** [docs/TECHNICAL.md](docs/TECHNICAL.md) — architecture, APIs, RAG pipeline, config, and operational notes.
-
 ## What it demonstrates
 
 - **Vector database (Qdrant)** with model-aware collection naming
@@ -86,9 +84,11 @@ See `Kestrel.Api/appsettings.Example.json` for profile shapes.
 
 With `Authentication:Google:ClientId` empty, the API stays open in **Development** (handy for first-time setup). Set a Client ID on both API and Angular to require Google login.
 
+**Never commit Client IDs or ApiKeys.** They belong only in gitignored files (see below). Committed examples use placeholders only.
+
 1. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an OAuth client of type **Web application**.
 2. Under **Authorized JavaScript origins**, add `http://localhost:4200` (and any other UI origin you use). A redirect URI is not required for the GIS ID-token button flow.
-3. Put the Client ID only in **gitignored** local files (never commit it):
+3. Configure local secrets:
 
 ```json
 // Kestrel.Api/appsettings.Development.json (gitignored)
@@ -101,14 +101,16 @@ With `Authentication:Google:ClientId` empty, the API stays open in **Development
 }
 ```
 
-```bash
-# Angular — copy example, then paste Client ID
-cp kestrel-web/public/kestrel-config.local.example.js kestrel-web/public/kestrel-config.local.js
+```powershell
+# Angular — copy example, then paste Client ID into the new file
+Copy-Item kestrel-web\public\kestrel-config.local.example.js kestrel-web\public\kestrel-config.local.js
 ```
 
-`kestrel-config.local.js` sets `window.__KESTREL_CONFIG__.googleClientId` and is gitignored.
+`kestrel-config.local.js` sets `window.__KESTREL_CONFIG__.googleClientId` and is gitignored. Committed `environment*.ts` files keep `googleClientId: ''`.
 
 Protected: all `/api/*` except `/api/health/llm` (plus Aspire `/health` and `/alive`). Outside Development, a missing Client ID fails startup.
+
+**IDE browsers:** Google Sign-In does not work in Cursor’s built-in browser (sandbox blocks OAuth popups). Open http://localhost:4200/ in Chrome, Edge, or Firefox.
 
 ## Switch LLM / use a more powerful PC
 
@@ -164,13 +166,16 @@ Report: `data/eval/latest-report.md`
 ## Solution layout
 
 - `Kestrel.AppHost` — Aspire orchestrator  
-- `Kestrel.Api` — Minimal API (`/api/chat` SSE, `/api/search`, `/api/equipment`, `/api/feedback`)  
+- `Kestrel.Api` — Minimal API (`/api/chat` SSE, `/api/search`, `/api/equipment`, `/api/feedback`) + Google JWT / API-key auth  
 - `Kestrel.Core` — RAG, LLM factory, chunking, stores  
 - `Kestrel.DataGen` — synthetic manuals, SOPs, maintenance DB, golden questions  
 - `Kestrel.Ingestion` — embed + upsert  
-- `Kestrel.Eval` — retrieval metrics  
-- `kestrel-web` — Angular chat UI  
+- `Kestrel.Eval` — retrieval metrics (uses `X-Api-Key` when auth is on)  
+- `kestrel-web` — Angular chat UI (GIS login gate when Client ID configured)  
 - `tests/Kestrel.Tests` — unit tests  
+- `kestrel-web/public/kestrel-config.local.example.js` — template for local Google Client ID  
+
+Local-only (gitignored): `Kestrel.Api/appsettings.Development.json`, `kestrel-web/public/kestrel-config.local.js`, and optionally `docs/TECHNICAL.md`.
 
 ## Example questions
 
